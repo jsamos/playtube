@@ -1,0 +1,10 @@
+version: '3'
+services:
+  playlist-loader:
+    image: python:3.7-slim
+    build: ./playlist_loader
+    volumes:
+      - ./playlist_loader:/code
+      - ./data:/data
+    environment:
+      - PYTHONPATH=/code/playlist_loader
