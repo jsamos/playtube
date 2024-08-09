@@ -1,2 +1,3 @@
-def queue_ready():
-    print("QUEUE READY")
+def playlist_created(data):
+    print("PLAYLIST RECIEVED")
+    print(data)

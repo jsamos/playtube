@@ -1,12 +1,17 @@
 import argparse
-from app import cue
-from app import audio
+from . import cue
+from . import audio
+from redis import Redis
+from rq import Queue
+import json
 
-def load_tracks(cue_path):
+redis_conn = Redis(host='redis', port=6379)
+q = Queue(connection=redis_conn)
+
+def load_mix(cue_path):
     with open(cue_path) as f:
         cue_string = f.read()
-    tracks = cue.parse_cue_tracks(cue_string)
-    return tracks
+    return cue.parse_cue(cue_string)
 
 def convert_time_to_seconds(time):
     return int(time[:2]) * 3600 + int(time[3:5]) * 60 + int(time[6:8])
@@ -16,40 +21,6 @@ def add_mix_length(playlist):
     length = f"{audio_length // 3600:02d}:{(audio_length % 3600) // 60:02d}:{audio_length % 60:02d}"
     playlist['length'] = length
 
-
-"""
-{
-        'title': 'Mix 1',
-        'performer': 'DJ Copilot',
-        'file': 'tests/fixtures/fixture.mp3',
-        'track': '01',
-        'index': '00:00:00',
-        'length': '00:13:09',
-        'tracks': [
-            {
-                'title': 'Confusion',
-                'performer': 'Fickry',
-                'file': '/data/240607-V1P1/Fickry - Confusion.mp3',
-                'track': '01',
-                'index': '00:00:00'
-            },
-            {
-                'title': "What's Luv (Original Mix)",
-                'performer': 'Carlos A, G-Falex',
-                'file': "/data/240607-V1P1/Carlos A, G-Falex - What's Luv (Original Mix).mp3",
-                'track': '02',
-                'index': '00:04:12'
-            },
-            {
-                'title': "What's Luv (Original Mix)",
-                'performer': 'Carlos A, G-Falex',
-                'file': "/data/240607-V1P1/Carlos A, G-Falex - What's Luv (Original Mix).mp3",
-                'track': '03',
-                'index': '00:08:12'
-            }
-        ]
-    }
-"""
 def add_track_lengths(playlist):
     tracks = playlist['tracks']
     mix_length_seconds = convert_time_to_seconds(playlist['length'])
@@ -74,7 +45,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("cue_path", help="Path to the cue file")
     args = parser.parse_args()
-
-    cue_path = args.cue_path
-    tracks = load_tracks(cue_path)
-    print(tracks)
+    playlist = load_mix(args.cue_path)
+    add_mix_length(playlist)
+    add_track_lengths(playlist)
+    playlist_json = json.dumps(playlist)
+    q.enqueue('tasks.playlist_created', playlist_json)
