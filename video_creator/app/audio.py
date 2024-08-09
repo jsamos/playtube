@@ -17,7 +17,7 @@ def list_all_tags(audio):
     else:
         print("No tags found or unsupported file type")
 
-def extract_album_artwork(file_path):
+def extract_album_cover(file_path):
     # Load the audio file
     audio = File(file_path)
 

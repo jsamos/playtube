@@ -11,9 +11,9 @@ def expected_image_file(audio_file):
     base, _ = os.path.splitext(audio_file)
     return f"{base}.jpg"
 
-def test_extract_album_artwork(audio_file, expected_image_file):
+def test_extract_album_cover(audio_file, expected_image_file):
     # Run the function
-    result = extract_album_artwork(audio_file)
+    result = extract_album_cover(audio_file)
     
     # Check if the PNG file is created
     assert os.path.exists(expected_image_file)
