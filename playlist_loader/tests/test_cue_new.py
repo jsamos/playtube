@@ -38,3 +38,8 @@ def test_parse_cue():
     actual_tracks = parse_cue(cue_string)
     
     assert actual_tracks == expected_tracks         
+
+def test_parse_cue_empty():
+    cue_string = "This is a random string"
+    actual_tracks = parse_cue(cue_string)        
+    assert actual_tracks == []
