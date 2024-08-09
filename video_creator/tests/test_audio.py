@@ -4,7 +4,7 @@ from app.audio import *
 
 @pytest.fixture
 def audio_file():
-    return 'tests/fixtures/Ezequiel G - Phatt Square.mp3'
+    return 'tests/fixtures/Fickry - Confusion.mp3'
 
 @pytest.fixture
 def expected_image_file(audio_file):
