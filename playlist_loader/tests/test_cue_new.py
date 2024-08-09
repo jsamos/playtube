@@ -44,3 +44,24 @@ def test_parse_cue_tracks():
         cue_string = "This is a random string"
         actual_tracks = parse_cue_tracks(cue_string)        
         assert actual_tracks == []
+    
+def test_parse_mix_track():
+    def test_parse_valid():
+        mix_string = """
+            TITLE "Mix 1"
+            PERFORMER "DJ Copilot"
+            FILE "mix1.mp3" MP3
+        """
+        expected_track = {
+            'title': 'Mix 1',
+            'performer': 'DJ Copilot',
+            'file': 'mix1.mp3',
+        }
+        actual_track = parse_mix_track(mix_string)
+        
+        assert actual_track == expected_track         
+
+    def test_parse_mix_track_empty():
+        mix_string = "This is a random string"
+        actual_track = parse_mix_track(mix_string)        
+        assert actual_track == {}
