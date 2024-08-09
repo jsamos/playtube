@@ -1,0 +1,4 @@
+pytest
+redis
+rq
+ffmpeg

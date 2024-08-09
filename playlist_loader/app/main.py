@@ -69,7 +69,6 @@ def add_track_lengths(playlist):
             
         length = f"{length_seconds // 60:02d}:{length_seconds % 60:02d}"
         tracks[i]['length'] = length
-    #tracks[-1]['length'] = None
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

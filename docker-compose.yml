@@ -8,3 +8,20 @@ services:
       - ./data:/data
     environment:
       - PYTHONPATH=/code/playlist_loader
+    depends_on:
+      - redis
+  video-creator:
+    image: python:3.7-slim
+    build: ./video_creator
+    volumes:
+      - ./video_creator:/code
+      - ./data:/data
+    environment:
+      - PYTHONPATH=/code/video_creator
+    depends_on:
+      - redis
+  redis:
+    image: "redis:alpine"
+    container_name: redis
+    ports:
+      - "6379:6379"
