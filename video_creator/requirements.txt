@@ -1,4 +1,6 @@
 pytest
+mutagen
+Pillow
 redis
 rq
 ffmpeg
