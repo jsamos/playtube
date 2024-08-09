@@ -58,15 +58,24 @@ FILE "/data/240607-V1P1/240607-V1P1.mp3" WAVE
         FILE "/data/240607-V1P1/Carlos A, G-Falex - What's Luv (Original Mix).mp3" WAVE
         INDEX 01 00:04:12
 """
+
 def parse_mix_track(cue_string):
     track_info = {}
     lines = cue_string.split('\n')
     for line in lines:
         line = line.strip()
-        if line.startswith('TITLE'):
+        if line.startswith('TITLE') and 'title' not in track_info:
             track_info['title'] = line.split('"')[1]
-        elif line.startswith('PERFORMER'):
+        elif line.startswith('PERFORMER') and 'performer' not in track_info:
             track_info['performer'] = line.split('"')[1]
-        elif line.startswith('FILE'):
+        elif line.startswith('FILE') and 'file' not in track_info:
             track_info['file'] = line.split('"')[1]
+        
+        if 'title' in track_info and 'performer' in track_info and 'file' in track_info:
+            break
     return track_info
+
+def parse_cue(cue_string):
+    mix_track = parse_mix_track(cue_string)
+    mix_track['tracks'] = parse_cue_tracks(cue_string)
+    return mix_track
