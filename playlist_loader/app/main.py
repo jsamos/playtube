@@ -4,7 +4,7 @@ from app import cue
 def load_tracks(cue_path):
     with open(cue_path) as f:
         cue_string = f.read()
-    tracks = cue.parse_cue(cue_string)
+    tracks = cue.parse_cue_tracks(cue_string)
     return tracks
 
 """

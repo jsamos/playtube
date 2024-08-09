@@ -16,7 +16,7 @@ FILE "01 240607-V1P1.wav" WAVE
 		FILE "/data/240607-V1P1/Carlos A, G-Falex - What's Luv (Original Mix).mp3" WAVE
 		INDEX 01 00:04:12
 """
-def parse_cue(cue_string):
+def parse_cue_tracks(cue_string):
     tracks = []
     lines = cue_string.split('\n')
     track_info = {}

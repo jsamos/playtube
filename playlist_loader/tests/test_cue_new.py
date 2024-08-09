@@ -1,7 +1,7 @@
-from app.cue import parse_cue
+from app.cue import parse_cue_tracks
 import pytest
 
-def test_parse_cue():
+def test_parse_cue_tracks():
     def test_parse_valid():
         cue_string = """
             REM DATE 2024-06-10 08:14 PM
@@ -36,11 +36,11 @@ def test_parse_cue():
                 'index': '00:04:12'
             }
         ]
-        actual_tracks = parse_cue(cue_string)
+        actual_tracks = parse_cue_tracks(cue_string)
         
         assert actual_tracks == expected_tracks         
 
-    def test_parse_cue_empty():
+    def test_parse_cue_tracks_empty():
         cue_string = "This is a random string"
-        actual_tracks = parse_cue(cue_string)        
+        actual_tracks = parse_cue_tracks(cue_string)        
         assert actual_tracks == []
