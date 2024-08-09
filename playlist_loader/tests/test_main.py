@@ -2,13 +2,13 @@ import pytest
 import app.main
 
 def test_add_track_lengths():
-    return
     playlist = {
         'title': 'Mix 1',
         'performer': 'DJ Copilot',
         'file': 'tests/fixtures/fixture.mp3',
         'track': '01',
         'index': '00:00:00',
+        'length': '00:13:09',
         'tracks': [
             {
                 'title': 'Confusion',
@@ -33,7 +33,8 @@ def test_add_track_lengths():
             }
         ]
     }
-    expected_track_lengths = ['04:12', '04:00', None]
+    # NOTE: difference between 00:08:12 and 00:13:09 is 04:57
+    expected_track_lengths = ['04:12', '04:00', '04:57']
     app.main.add_track_lengths(playlist)
     for i, track in enumerate(playlist['tracks']):
         assert track['length'] == expected_track_lengths[i]
