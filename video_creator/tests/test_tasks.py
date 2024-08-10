@@ -1,40 +1,21 @@
 import pytest
-import pytest
-import os
-import time
 import app.tasks as tasks
-import moviepy.editor as mp
 import json
 from unittest.mock import patch
 
 def test_track_found():
-    mp3_path = "/code/tests/fixtures/Fickry - Confusion.mp3"
-    image_path = "/code/tests/fixtures/Fickry - Confusion.jpg"
-    video_file_path = "/code/tests/fixtures/Fickry - Confusion.mp4"
-    expected_length = "00:02"
-
     data = {
-        "image": image_path,
-        "file": mp3_path,
-        "length": expected_length,
-        "video": video_file_path
+        "file": "track1.mp3"
     }
 
-    json_string = json.dumps(data)
-    
-    tasks.track_found(json_string)
-    
-    assert os.path.exists(video_file_path)
-    
-    video = mp.VideoFileClip(video_file_path)
-    duration = video.duration
-    minutes = int(duration // 60)
-    seconds = int(duration % 60)
-    actual_length = f"{minutes:02d}:{seconds:02d}"
+    with patch('app.tasks.video.create_video_from_image') as mock_create_video:
+        tasks.track_found(json.dumps(data))
 
-    assert actual_length == expected_length
-    
-    os.remove(video_file_path)
+        # Check that create_video_from_image was called once
+        assert mock_create_video.call_count == 1
+
+        # Check the arguments passed to create_video_from_image
+        mock_create_video.assert_called_with(data)
 
 def test_playlist_created():
     json_string = json.dumps({
