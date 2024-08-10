@@ -27,7 +27,7 @@ def create_video_from_image(data):
         '-c:v', 'libx264',  # Video codec
         '-t', str(total_seconds),  # Duration in seconds
         '-pix_fmt', 'yuv420p',  # Pixel format for compatibility
-        '-vf', 'fps=24',  # Set frame rate to 24 fps
+        '-vf', 'fps=1',  # Set frame rate to 24 fps
         output_path  # Output video file
     ]
     
@@ -48,5 +48,5 @@ def combine_videos(video_paths):
     final_clip = concatenate_videoclips(video_clips)
     
     # Write the final video to a file
-    final_clip.write_videofile(output_path, codec='libx264', fps=24)    
+    final_clip.write_videofile(output_path, codec='libx264', fps=1)    
     return output_path
