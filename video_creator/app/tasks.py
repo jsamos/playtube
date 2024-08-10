@@ -52,6 +52,9 @@ def video_files_created(json_string):
     q.enqueue('tasks.combined_video_created', json_string)
 
 def combined_video_created(json_string):
-    print("COMBINED VIDEO CREATED")
+    print("COMBINED VIDEO CREATED: Cleaning up")
     data = json.loads(json_string)
-    print(f"Playlist video created: {data['video']}")
+    for track in data['tracks']:
+        os.remove(track['video'])
+        os.remove(track['image'])
+    print("All track video and image files cleaned up!")

@@ -3,6 +3,7 @@ import os
 import app.tasks as tasks
 import json
 from unittest.mock import patch
+import tempfile
 
 def test_track_found():
     data = {
@@ -114,3 +115,28 @@ def test_video_files_created():
 
             # Check that q.enqueue was called once with the correct argument
             mock_enqueue.assert_called_once_with('tasks.combined_video_created', json_string)
+
+def test_combined_video_created():
+    temp_files = []
+    try:
+        # Create temporary video and image files for tracks
+        tracks = []
+        for i in range(4):
+            video_file = tempfile.NamedTemporaryFile(suffix=".mp4", delete=False)
+            image_file = tempfile.NamedTemporaryFile(suffix=".jpg", delete=False)
+            tracks.append({"video": video_file.name, "image": image_file.name})
+            temp_files.extend([video_file.name, image_file.name])
+
+        json_string = json.dumps({"tracks": tracks})
+
+        # Call the combined_video_created function
+        tasks.combined_video_created(json_string)
+
+        # Assert that the temporary files were removed
+        for temp_file in temp_files:
+            assert not os.path.exists(temp_file)
+    finally:
+        # Clean up any remaining temporary files
+        for temp_file in temp_files:
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
