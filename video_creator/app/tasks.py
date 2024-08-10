@@ -20,6 +20,9 @@ def track_found(json_string):
     video.create_video_from_image(data)
     print(data)
 
+def check_all_tracks_processed(tracks):
+    return all(os.path.exists(track['video']) for track in tracks)
+
 def tracks_enqueued():
     print("TRACKS ENQUEUED")
     print("WAITING FOR ALL TRACKS TO BE PROCESSED") 
