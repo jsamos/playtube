@@ -29,8 +29,9 @@ def test_playlist_created():
         tasks.playlist_created(json_string)
 
         # Check that enqueue was called twice
-        assert mock_enqueue.call_count == 2
+        assert mock_enqueue.call_count == 3
 
         # Check the arguments passed to enqueue
         mock_enqueue.assert_any_call('tasks.track_found', json.dumps({"file": "track1.mp3"}))
         mock_enqueue.assert_any_call('tasks.track_found', json.dumps({"file": "track2.mp3"}))
+        mock_enqueue.assert_any_call('tasks.tracks_enqueued', json_string)
