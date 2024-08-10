@@ -1,6 +1,7 @@
 import argparse
-from . import cue
+import os
 from . import audio
+from . import cue
 from redis import Redis
 from rq import Queue
 import json
@@ -41,6 +42,21 @@ def add_track_lengths(playlist):
         length = f"{length_seconds // 60:02d}:{length_seconds % 60:02d}"
         tracks[i]['length'] = length
 
+def get_video_file_path(file_path):
+    if not file_path:
+        return ''
+    image_dir = os.path.dirname(file_path)
+    output_filename = os.path.basename(file_path)
+    output_filename = os.path.splitext(output_filename)[0]  # Remove file extension
+    output_path = os.path.join(image_dir, f'{output_filename}.mp4')
+    return output_path
+
+def create_media_and_add_paths(playlist):
+    tracks = playlist['tracks']
+    for i in range(len(tracks)):
+        tracks[i]['image'] = audio.extract_album_cover(tracks[i]['file'])
+        tracks[i]['video'] = get_video_file_path(tracks[i]['file'])
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("cue_path", help="Path to the cue file")
@@ -48,5 +64,6 @@ if __name__ == "__main__":
     playlist = load_mix(args.cue_path)
     add_mix_length(playlist)
     add_track_lengths(playlist)
+    create_media_and_add_paths(playlist)
     playlist_json = json.dumps(playlist)
     q.enqueue('tasks.playlist_created', playlist_json)

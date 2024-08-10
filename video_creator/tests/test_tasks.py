@@ -7,21 +7,6 @@ import moviepy.editor as mp
 import json
 from unittest.mock import patch
 
-def test_get_video_file_path():
-    file_path = "/path/to/video.avi"
-    expected_result = "/path/to/video.mp4"
-    
-    result = tasks.get_video_file_path(file_path)
-    
-    assert result == expected_result
-def test_get_video_file_path_empty_string():
-    file_path = ""
-    expected_result = ""
-    
-    result = tasks.get_video_file_path(file_path)
-    
-    assert result == expected_result
-
 def test_track_found():
     mp3_path = "/code/tests/fixtures/Fickry - Confusion.mp3"
     image_path = "/code/tests/fixtures/Fickry - Confusion.jpg"
@@ -31,7 +16,8 @@ def test_track_found():
     data = {
         "image": image_path,
         "file": mp3_path,
-        "length": expected_length
+        "length": expected_length,
+        "video": video_file_path
     }
 
     json_string = json.dumps(data)

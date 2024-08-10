@@ -1,5 +1,6 @@
 import pytest
 import app.main
+from unittest.mock import patch
 
 def test_add_track_lengths():
     playlist = {
@@ -50,3 +51,37 @@ def test_add_mix_length():
     expected_length = "00:00:12"
     app.main.add_mix_length(playlist)
     assert playlist['length'] == expected_length
+
+def test_get_video_file_path():
+    file_path = "/path/to/video.avi"
+    expected_result = "/path/to/video.mp4"
+    result = app.main.get_video_file_path(file_path)
+    assert result == expected_result
+
+def test_get_video_file_path_empty_string():
+    file_path = ""
+    expected_result = ""
+    result = app.main.get_video_file_path(file_path)
+    assert result == expected_result
+
+@pytest.fixture
+def playlist():
+    return {
+        'tracks': [
+            {'file': 'tests/fixtures/Fickry - Confusion.mp3'},
+            {'file': 'tests/fixtures/Another - Track.mp3'}
+        ]
+    }
+
+def test_create_media_and_add_paths(playlist):
+    with patch('app.audio.extract_album_cover', return_value='tests/fixtures/Another - Track.jpg') as mock_extract_album_cover:
+        app.main.create_media_and_add_paths(playlist)
+        
+        # Check if extract_album_cover was called for each track
+        assert mock_extract_album_cover.call_count == len(playlist['tracks'])
+
+        # Check if the media file paths were set correctly
+        assert playlist['tracks'][0]['image'] == 'tests/fixtures/Another - Track.jpg'
+        assert playlist['tracks'][1]['image'] == 'tests/fixtures/Another - Track.jpg'
+        assert playlist['tracks'][0]['video'] == 'tests/fixtures/Fickry - Confusion.mp4'
+        assert playlist['tracks'][1]['video'] == 'tests/fixtures/Another - Track.mp4'
