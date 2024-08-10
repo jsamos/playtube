@@ -46,4 +46,12 @@ def tracks_enqueued(json_string, wait_time=config['track_processing']['pause_tim
 def video_files_created(json_string):
     print("VIDEO FILES CREATED")
     data = json.loads(json_string)
-    print(data)
+    video_paths = [track['video'] for track in data['tracks']]
+    combined_video_path = video.combine_videos(video_paths)
+    print(f"Combined video created: {combined_video_path}")
+    q.enqueue('tasks.combined_video_created', json_string)
+
+def combined_video_created(json_string):
+    print("COMBINED VIDEO CREATED")
+    data = json.loads(json_string)
+    print(f"Playlist video created: {data['video']}")

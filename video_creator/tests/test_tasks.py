@@ -89,3 +89,28 @@ def test_tracks_enqueued_timeout():
 
         # Check that q.enqueue was not called
         mock_enqueue.assert_not_called()
+
+def test_video_files_created():
+    json_string = json.dumps({
+        "tracks": [
+            {"video": "video1.mp4"},
+            {"video": "video2.mp4"},
+            {"video": "video3.mp4"},
+            {"video": "video4.mp4"}
+        ]
+    })
+
+    with patch('app.video.combine_videos', return_value='combined_video.mp4') as mock_combine_videos:
+        with patch('app.tasks.q.enqueue') as mock_enqueue:
+            tasks.video_files_created(json_string)
+
+            # Check that combine_videos was called once with the correct arguments
+            mock_combine_videos.assert_called_once_with([
+                "video1.mp4",
+                "video2.mp4",
+                "video3.mp4",
+                "video4.mp4"
+            ])
+
+            # Check that q.enqueue was called once with the correct argument
+            mock_enqueue.assert_called_once_with('tasks.combined_video_created', json_string)
