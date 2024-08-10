@@ -53,3 +53,39 @@ def test_check_all_tracks_processed_all_exist(tracks_all_exist):
 
 def test_check_all_tracks_processed_with_nonexistent(tracks_with_nonexistent):
     assert tasks.check_all_tracks_processed(tracks_with_nonexistent) == False
+
+def test_tracks_enqueued():
+    json_string = json.dumps({
+        "tracks": [
+            {"file": "video1.mp4"},
+            {"file": "video2.mp4"}
+        ]
+    })
+
+    with patch('app.tasks.check_all_tracks_processed', side_effect=[False, True]) as mock_check, \
+         patch('app.tasks.q.enqueue') as mock_enqueue:
+        tasks.tracks_enqueued(json_string, wait_time=1)
+
+        # Check that check_all_tracks_processed was called twice
+        assert mock_check.call_count == 2
+
+        # Check that q.enqueue was called with 'tasks.video_files_created'
+        mock_enqueue.assert_called_with('tasks.video_files_created', json_string)
+
+def test_tracks_enqueued_timeout():
+    json_string = json.dumps({
+        "tracks": [
+            {"file": "video1.mp4"},
+            {"file": "video2.mp4"}
+        ]
+    })
+
+    with patch('app.tasks.check_all_tracks_processed', return_value=False) as mock_check, \
+         patch('app.tasks.q.enqueue') as mock_enqueue:
+        tasks.tracks_enqueued(json_string, wait_time=0, time_out=0)
+
+        # Check that check_all_tracks_processed was called once
+        assert mock_check.call_count == 1
+
+        # Check that q.enqueue was not called
+        mock_enqueue.assert_not_called()

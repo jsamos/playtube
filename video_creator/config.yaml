@@ -1,0 +1,6 @@
+redis:
+  host: redis
+  port: 6379
+track_processing:
+  pause_time: 60
+  time_out: 1200
