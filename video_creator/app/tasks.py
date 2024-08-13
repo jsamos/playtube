@@ -3,7 +3,7 @@ import json
 import yaml
 from redis import Redis
 from rq import Queue
-from . import video
+import app.video as video
 import time
 
 # Load configuration
@@ -16,8 +16,8 @@ q = Queue(connection=redis_conn)
 def playlist_created(json_string):
     data = json.loads(json_string)
     for track in data['tracks']:
-        q.enqueue('tasks.track_found', json.dumps(track))
-    q.enqueue('tasks.tracks_enqueued', json.dumps(data))
+        q.enqueue('app.tasks.track_found', json.dumps(track))
+    q.enqueue('app.tasks.tracks_enqueued', json.dumps(data))
     print("PLAYLIST TRACKS ENQUEUED")
 
 def track_found(json_string):
@@ -41,7 +41,7 @@ def tracks_enqueued(json_string, wait_time=config['track_processing']['pause_tim
             print(f"WAITING FOR ALL TRACKS TO BE PROCESSED (wait time: {wait_time} seconds)") 
             time.sleep(wait_time)
     
-    q.enqueue('tasks.video_files_created', json_string)
+    q.enqueue('app.tasks.video_files_created', json_string)
 
 def video_files_created(json_string):
     print("VIDEO FILES CREATED")
@@ -49,7 +49,7 @@ def video_files_created(json_string):
     video_paths = [track['video'] for track in data['tracks']]
     combined_video_path = video.combine_videos(video_paths)
     print(f"Combined video created: {combined_video_path}")
-    q.enqueue('tasks.combined_video_created', json_string)
+    q.enqueue('app.tasks.combined_video_created', json_string)
 
 def combined_video_created(json_string):
     print("COMBINED VIDEO CREATED: Cleaning up")

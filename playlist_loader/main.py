@@ -66,4 +66,4 @@ if __name__ == "__main__":
     add_track_lengths(playlist)
     create_media_and_add_paths(playlist)
     playlist_json = json.dumps(playlist)
-    q.enqueue('tasks.playlist_created', playlist_json)
+    q.enqueue('app.tasks.playlist_created', playlist_json)

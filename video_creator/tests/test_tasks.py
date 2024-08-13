@@ -34,9 +34,9 @@ def test_playlist_created():
         assert mock_enqueue.call_count == 3
 
         # Check the arguments passed to enqueue
-        mock_enqueue.assert_any_call('tasks.track_found', json.dumps({"file": "track1.mp3"}))
-        mock_enqueue.assert_any_call('tasks.track_found', json.dumps({"file": "track2.mp3"}))
-        mock_enqueue.assert_any_call('tasks.tracks_enqueued', json_string)
+        mock_enqueue.assert_any_call('app.tasks.track_found', json.dumps({"file": "track1.mp3"}))
+        mock_enqueue.assert_any_call('app.tasks.track_found', json.dumps({"file": "track2.mp3"}))
+        mock_enqueue.assert_any_call('app.tasks.tracks_enqueued', json_string)
 
 @pytest.fixture
 def tracks_all_exist():
@@ -71,7 +71,7 @@ def test_tracks_enqueued():
         assert mock_check.call_count == 2
 
         # Check that q.enqueue was called with 'tasks.video_files_created'
-        mock_enqueue.assert_called_with('tasks.video_files_created', json_string)
+        mock_enqueue.assert_called_with('app.tasks.video_files_created', json_string)
 
 def test_tracks_enqueued_timeout():
     json_string = json.dumps({
@@ -114,7 +114,7 @@ def test_video_files_created():
             ])
 
             # Check that q.enqueue was called once with the correct argument
-            mock_enqueue.assert_called_once_with('tasks.combined_video_created', json_string)
+            mock_enqueue.assert_called_once_with('app.tasks.combined_video_created', json_string)
 
 def test_combined_video_created():
     temp_files = []
