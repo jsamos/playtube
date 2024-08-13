@@ -1,5 +1,5 @@
 import pytest
-import app.main
+import main
 from unittest.mock import patch
 
 def test_add_track_lengths():
@@ -36,7 +36,7 @@ def test_add_track_lengths():
     }
     # NOTE: difference between 00:08:12 and 00:13:09 is 04:57
     expected_track_lengths = ['04:12', '04:00', '04:57']
-    app.main.add_track_lengths(playlist)
+    main.add_track_lengths(playlist)
     for i, track in enumerate(playlist['tracks']):
         assert track['length'] == expected_track_lengths[i]
 
@@ -49,19 +49,19 @@ def test_add_mix_length():
         'index': '00:00:00'
     }
     expected_length = "00:00:12"
-    app.main.add_mix_length(playlist)
+    main.add_mix_length(playlist)
     assert playlist['length'] == expected_length
 
 def test_get_video_file_path():
     file_path = "/path/to/video.avi"
     expected_result = "/path/to/video.mp4"
-    result = app.main.get_video_file_path(file_path)
+    result = main.get_video_file_path(file_path)
     assert result == expected_result
 
 def test_get_video_file_path_empty_string():
     file_path = ""
     expected_result = ""
-    result = app.main.get_video_file_path(file_path)
+    result = main.get_video_file_path(file_path)
     assert result == expected_result
 
 @pytest.fixture
@@ -75,7 +75,7 @@ def playlist():
 
 def test_create_media_and_add_paths(playlist):
     with patch('app.audio.extract_album_cover', return_value='tests/fixtures/Another - Track.jpg') as mock_extract_album_cover:
-        app.main.create_media_and_add_paths(playlist)
+        main.create_media_and_add_paths(playlist)
         
         # Check if extract_album_cover was called for each track
         assert mock_extract_album_cover.call_count == len(playlist['tracks'])

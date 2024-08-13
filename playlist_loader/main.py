@@ -1,7 +1,7 @@
 import argparse
 import os
-from . import audio
-from . import cue
+import app.audio as audio
+import app.cue as cue
 from redis import Redis
 from rq import Queue
 import json
